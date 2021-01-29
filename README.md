@@ -17,6 +17,7 @@ Simple python implementation for displaying satellite positions in **Google Eart
 
 ----------
 
+![alt text](https://github.com/josepharmbruster/ge-satellite-tracker/blob/master/images/screenshot_1.png?raw=true)
 
 Original readme:
 > Copyright (c) 2013 Joseph Armbruster
