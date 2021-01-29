@@ -18,6 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import csv
 import ephem
 import getopt
 import logging
@@ -61,7 +62,7 @@ _config_defaults = {
 	},
 	'spacetrack':{
 		'auth_url':'https://www.space-track.org/ajaxauth/login',
-		'keps_url':'https://www.space-track.org/basicspacedata/query/class/tle_latest/favorites/amateur/ORDINAL/1/EPOCH/%3Enow-30/format/3le',
+		'keps_url':'https://www.space-track.org/basicspacedata/query/class/gp/decay_date/null-val/epoch/%3Enow-30/orderby/norad_cat_id/format/csv',
 		'identity':'MISSING',
 		'password':'MISSING'
 	},
@@ -691,12 +692,23 @@ def load_cached_keps():
 	cache_filename = get_cache_filename(source)
 
 	log.info('loading keps from cache %s' % (cache_filename))
+	
+	keps = None
 
 	if os.path.exists(cache_filename):
-		keps = open(cache_filename,'r').readlines()
-		keps = [line.strip() for line in keps if not line.strip() == '']
-		return [ [keps[i], keps[i+1], keps[i+2]] for i in xrange(0, len(keps), 3)]
 
+		if source == 'amsat':
+
+			keps = open(cache_filename,'r').readlines()
+			keps = [line.strip() for line in keps if not line.strip() == '']
+			return [ [keps[i], keps[i+1], keps[i+2]] for i in xrange(0, len(keps), 3)]
+
+		elif source == 'spacetrack':
+
+			keps = open(cache_filename,'r').readlines()
+			csvobj = csv.reader(keps)
+			return [ [obj[-3], obj[-2], obj[-1]] for obj in csvobj ] 
+		
 	log.warn('unable to find cache with filename: %s', cache_filename)
 	return None
 	
@@ -735,8 +747,9 @@ def download_keps():
 			log.info('caching downloaded keps to: %s', cache_filename)
 			open(cache_filename, 'w').writelines(keps)
 
-		keps = [line.strip() for line in keps]
-		return [ [keps[i], keps[i+1], keps[i+2]] for i in xrange(0, len(keps), 3)]
+		csvobj = csv.reader(keps)
+		keps = [ [obj[-3], obj[-2], obj[-1]] for obj in csvobj ] 
+		return keps
 
 	except Exception, e:
 		log.error('unable to download keps')
