@@ -25,6 +25,7 @@ import logging
 import math
 import os
 import pickle
+import re
 import sys
 import time
 import urllib
@@ -406,13 +407,29 @@ def generate_satellites_kml(keps):
 		elif source == 'spacetrack':
 			sat_name = kep[0][2:]
 
+		# note(joe): this is the case of the sat name matching Exactly
 		if sat_name in sats_of_interest:
 
-			log.info('processing: ' + sat_name)
+			log.info('processing: %s' % (sat_name))
 			method_name = 'satellite%d' % ( i )
 			_keps[method_name] = kep
 			network_link_kmls += get_network_link_kml(sat_name, method_name)
 			i += 1
+
+		# note(joe): this is the case of using a regex to match a sat name
+		for sat_of_interest in sats_of_interest:
+			token = sat_of_interest.strip()
+			if not token.startswith('re('):
+				continue
+
+			token = token[3:-1]
+			if re.match(token, sat_name):
+				log.info('processing sat found via regex: %s' % (sat_name))
+				method_name = 'satellite%d' % ( i )
+				_keps[method_name] = kep
+				network_link_kmls += get_network_link_kml(sat_name, method_name)
+				i += 1
+
 
 	if _config.has_section('ground'):
 		network_link_kmls += _ground_station_network_link 
