@@ -1,6 +1,6 @@
 # README
 
-Simple python implementation for displaying satellite positions in **Google Earth** via a **KML** file. It also displays *satellite coverage* and *Line of Sight*.
+Simple python implementation for displaying satellite positions in **Google Earth** via a **KML** file. It also displays *satellite coverage* and *Line of Sight* from programmed stations.  This script can be used for custom tracking purposes and can ebe asily integrated with other libs for radio / rotator control.  Have fun with it!
 
 ### Usage
 
@@ -17,6 +17,7 @@ Simple python implementation for displaying satellite positions in **Google Eart
 
 ----------
 
+![alt text](https://github.com/josepharmbruster/ge-satellite-tracker/blob/master/images/screenshot_1.png?raw=true)
 
 Original readme:
 > Copyright (c) 2013 Joseph Armbruster
